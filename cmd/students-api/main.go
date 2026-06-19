@@ -11,6 +11,7 @@ import (
 	"log/slog"
 	"context"
 	"time"
+	"github.com/Sameetpatro/go-crud/internal/http/handlers/students"
 )
 
 func main(){
@@ -25,9 +26,7 @@ func main(){
 
 	//aeithi server ra endpoints banauchi
 	router := http.NewServeMux() //aeita multiplexer banauchi endpoints ra
-	router.HandleFunc("GET /home", func(res http.ResponseWriter, req *http.Request){
-		fmt.Fprintln(res, "Priya odia baasi, apanaknu mo students API ra backend services re swagatam")
-	}) // aeita gote endpoint
+	router.HandleFunc("POST /api/students", students.New()) // aeita gote endpoint
 
 	//server bana hela 
 	server :=http.Server{
