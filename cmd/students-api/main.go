@@ -1,17 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/Sameetpatro/go-crud/internal/config"
-	"net/http"
 	"log"
+	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"log/slog"
-	"context"
 	"time"
+
+	"github.com/Sameetpatro/go-crud/internal/config"
 	"github.com/Sameetpatro/go-crud/internal/http/handlers/students"
+	"github.com/Sameetpatro/go-crud/internal/storage/sqlite"
 )
 
 func main(){
@@ -21,12 +23,18 @@ func main(){
 	//database load
 	//setup router
 	//set server
-
+	
 	cfg := config.MustLoad() // eithi config load heigala
+	//database setup
+	storage, errr := sqlite.New(cfg)
+	if errr != nil {
+		log.Fatal(errr)
+	}
+	slog.Info("storage initialised", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
 
 	//aeithi server ra endpoints banauchi
 	router := http.NewServeMux() //aeita multiplexer banauchi endpoints ra
-	router.HandleFunc("POST /api/students", students.New()) // aeita gote endpoint
+	router.HandleFunc("POST /api/students", students.New(storage)) // aeita gote endpoint
 
 	//server bana hela 
 	server :=http.Server{
