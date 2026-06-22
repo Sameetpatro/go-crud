@@ -37,6 +37,7 @@ func main(){
 	router.HandleFunc("POST /api/students", students.New(storage)) // aeita gote endpoint
 	router.HandleFunc("GET /api/students/{id}", students.GetByID(storage))
 	router.HandleFunc("GET /api/students/all", students.GetList(storage))
+	router.HandleFunc("PUT /api/student/update/{id}", students.UpdateStudent(storage))
 	//server bana hela 
 	server :=http.Server{
 		Addr: cfg.HTTPServer.Addr, //aeita config re thiba storage path ku server address re set karuchi

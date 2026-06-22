@@ -5,4 +5,5 @@ type Storage interface{
 	CreateStudent(name string, email string, age int) (int, error)
 	GetStudentById(id int64)  (types.Student, error)
 	GetStudents() ([]types.Student, error)
+	UpdateTheStudent(id int64) (ok bool) 
 }

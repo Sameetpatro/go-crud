@@ -79,3 +79,10 @@ func GetList(storage storage.Storage) http.HandlerFunc{
 		response.WriteJson(res, http.StatusAccepted, students)
 	}
 }
+
+func UpdateStudent(storage storage.Storage) http.HandlerFunc{
+	return func(res http.ResponseWriter, req *http.Request){
+		slog.Info("Updating the Student with requested ID")
+		
+	}
+}
