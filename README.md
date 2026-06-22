@@ -1,4 +1,4 @@
-# go crud implementation — zany, bonkers, wild & crazy!
+# go crud implementation
 
 ```
 bhai yeh stalk mat karo.... abhi bs seekh raha hoon 😢😢😢😢😢😢😢
