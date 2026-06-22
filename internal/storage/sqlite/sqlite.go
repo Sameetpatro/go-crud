@@ -2,7 +2,9 @@ package sqlite
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/Sameetpatro/go-crud/internal/config"
+	"github.com/Sameetpatro/go-crud/internal/types"
 	_ "github.com/mattn/go-sqlite3"
 ) 
 
@@ -43,4 +45,21 @@ func (s *Sqlite) CreateStudent(name string, email string, age int) (int, error){
 		return 0, errrr
 	}
 	return int(lastid), nil
+}
+
+func (s *Sqlite) GetStudentById(id int64) (types.Student, error){
+	stmt, err := s.Db.Prepare("SELECT * FROM students WHERE id = ? LIMIT 1")
+	if err != nil{
+		return types.Student{}, err
+	}
+	defer stmt.Close()
+	var student types.Student
+	errr := stmt.QueryRow(id).Scan(&student.ID, &student.Name, &student.Email, &student.Age)
+	if errr != nil {
+		if errr == sql.ErrNoRows{
+			return types.Student{}, fmt.Errorf("no student found with id %s", fmt.Sprint(id))
+		}
+		return types.Student{}, fmt.Errorf("query error: %w", errr)
+	}
+	return student, nil
 }

@@ -35,7 +35,7 @@ func main(){
 	//aeithi server ra endpoints banauchi
 	router := http.NewServeMux() //aeita multiplexer banauchi endpoints ra
 	router.HandleFunc("POST /api/students", students.New(storage)) // aeita gote endpoint
-
+	router.HandleFunc("GET /api/students/{id}", students.GetByID(storage))
 	//server bana hela 
 	server :=http.Server{
 		Addr: cfg.HTTPServer.Addr, //aeita config re thiba storage path ku server address re set karuchi
