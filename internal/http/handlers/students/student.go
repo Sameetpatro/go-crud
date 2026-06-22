@@ -82,7 +82,41 @@ func GetList(storage storage.Storage) http.HandlerFunc{
 
 func UpdateStudent(storage storage.Storage) http.HandlerFunc{
 	return func(res http.ResponseWriter, req *http.Request){
+		id := req.PathValue("id")
 		slog.Info("Updating the Student with requested ID")
-		
+		intid, err := strconv.ParseInt(id, 10, 64)
+		if err != nil{
+			response.WriteJson(res, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+		var student types.Student
+		er := json.NewDecoder(req.Body).Decode(&student)
+		if errors.Is(er, io.EOF){
+			response.WriteJson(res, http.StatusBadRequest, response.GeneralError(fmt.Errorf("body cant be empty")))
+			return
+		}
+		if er != nil{
+			response.WriteJson(res, http.StatusBadRequest, response.GeneralError(fmt.Errorf("invalid body")))
+			return
+		}
+		// internal/http/handlers/students/student.go
+
+		if e := validator.New().Struct(student); e != nil {
+			var validationErrs validator.ValidationErrors
+			if errors.As(e, &validationErrs) {
+				response.WriteJson(res, http.StatusBadRequest, response.ValidationError(validationErrs))
+			} else {
+				response.WriteJson(res, http.StatusBadRequest, response.GeneralError(err))
+			}
+			return
+		}
+		updated, err := storage.UpdateTheStudent(intid, student.Name, student.Email, student.Age)
+		if err != nil{
+			response.WriteJson(res, http.StatusBadGateway, response.GeneralError(err))
+			return
+		}
+		slog.Info("updation done bhai")
+		response.WriteJson(res, http.StatusOK, updated)
+
 	}
 }

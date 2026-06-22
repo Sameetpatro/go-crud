@@ -88,10 +88,24 @@ func (s *Sqlite) GetStudents() ([]types.Student, error){
 	return students, nil
 }
 
-func (s *Sqlite) UpdateTheStudent(id int64) (ok bool){
-	// stmt, err := s.Db.Prepare("")
-	var st bool
-	st = false
+func (s *Sqlite) UpdateTheStudent(id int64, name string, email string, age int) (types.Student, error){
+	stmt, err := s.Db.Prepare("UPDATE students SET name = ?, email = ?, age = ? WHERE id = ?")
+	if err != nil{
+		return types.Student{}, err
+	}
+	defer stmt.Close()
+	res, err := stmt.Exec(name, email, age, id)
+	if err != nil{
+		return types.Student{}, err
+	}
+	rowsaff, err := res.RowsAffected()
+	if err != nil{
+		return types.Student{}, err
+	}
 
-	return st
+	if rowsaff == 0{
+		return types.Student{}, fmt.Errorf("No student has been found with the id: %d", id)
+	}
+
+	return s.GetStudentById(id)
 }
